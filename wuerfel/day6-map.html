@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
+    <title>MAP</title>
+    <script>
+
+        var alle = {orte:[] };
+/*
+ORT {
+    name: 'TEXT',
+    lat: number,
+    lang: number
+}
+*/
+var marker = [];
+
+var makeOrteListe = function () { 
+    $( 'table' ).remove();
+    var table = $('<table border="1">').appendTo('main');
+    console.log(alle.orte);
+    for (let i in alle.orte ) {
+        console.log( i );
+       var tr = $('<tr>').appendTo(table);
+       $('<td>').html(alle.orte[i].name).appendTo(tr);
+       $('<td>').html(alle.orte[i].lat).appendTo(tr);
+       $('<td>').html(alle.orte[i].lng).appendTo(tr);
+       $('<td>').append(
+           $('<button>')
+           .html('löschen')
+           .on('click', function () {
+               meineKarte.removeLayer(marker[i]);
+               marker.splice(i,1);
+               alle.orte.splice(i,1);
+               makeOrteListe();
+             })
+       ).appendTo(tr);
+        
+    }   
+ }
+
+ var meineKarte;
+
+        $(document).ready(function(){
+            meineKarte = L.map('karte', {center:[48.22798,16.3495], zoom: 14});
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; <a href="http://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'}).addTo(meineKarte);
+               
+        // GEOLocation
+        // موقعك من الخريطة
+        navigator.geolocation.getCurrentPosition(function (position) {
+                console.log(position);
+                var x = L.marker([position.coords.latitude,position.coords.longitude]).addTo(meineKarte);
+                x.bindPopup('Ich bin da').openPopup();
+         });   
+
+                
+                $('button').on('click', function (event) {
+                    event.preventDefault();
+                    
+                    var input1 = $('#ortname').val();
+                    
+                    if (input1 != '') {
+                        
+                   //  console.log(meineKarte.getCenter() );
+                    var mitte = meineKarte.getCenter();
+                    var  m = L.marker(mitte).addTo(meineKarte);
+                    m.bindPopup(input1).openPopup();
+                    $('#ortname').val('');
+
+                    alle.orte.push({
+                        name: input1,
+                        lat: mitte.lat,
+                        lng: mitte.lng
+                    });
+                    marker.push(m);
+                    makeOrteListe();
+                }
+              });     
+});
+    </script>
+    <style>
+	body { 
+        margin:0; 
+        padding:0; 
+    }
+	#karte {
+         width:100%;
+        height:500px;
+        position: relative;
+        z-index: 1;
+    }
+	#pointer { 
+        position:absolute; 
+        top:250px;
+        left:calc(50% - 50px); 
+        width:100px; 
+        height:100px;
+        z-index: 2;
+        pointer-events: none;
+    }
+	#pointer hr { 
+        border:none; 
+        margin:0; 
+        height:1px; 
+        width:100px; 
+        background:#000;
+    }
+	#pointer hr + hr { transform:rotate(90deg); }
+	main { padding:50px; font:20px Arial; }
+    </style>
+</head>
+<body>
+        <div id="karte"></div>
+        <div id="pointer"><hr><hr></div>
+        <main>
+        <form id="neu" action="?">
+            <p><strong>neuer Ort</strong></p>
+            <p><input type="text" id="ortname" placeholder="Bezeichnung Ort" value=""></p>
+            <p><button>Ort speichern</button></p>
+        </form>
+        <hr>
+        <p><strong>Liste aller gespeicherten Orte</strong></p>
+
+    </main>
+</body>
+</html>

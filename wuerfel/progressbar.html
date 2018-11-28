@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="jquery-3.3.1.min.js"></script>
+    <title>JavaScript progressbar</title>
+    <script>
+
+        $(document).ready(function () {
+
+            $('.progress').each(function () { 
+                var progress = $(this);
+
+            var meinInterval;
+            meinInterval = setInterval(function () {  
+                var aktuelleBreite = progress.width();
+                progress.css({width:aktuelleBreite-1});
+
+                if ( aktuelleBreite <= 0) {
+                    clearInterval(meinInterval);
+                    alert('Ende');
+                }
+          }, 40);
+        });
+
+          });
+    </script>
+    <style>
+        .countainer {
+            width: 60%;
+            max-width: 1020px;
+            margin: 2em auto 0 auto;
+            min-height: 20em;
+            box-shadow: 0 0 8px rgba(219, 0, 0, 0.2);
+        }
+        .progressbar {
+            border: 1px solid rgb(0, 81, 156);
+        }
+        .progress {
+            background: rgb(99, 248, 0);
+            height: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="countainer">
+       <div class="progressbar" style="width: 250px;">
+            <div class="progress"></div>
+       </div>
+       <br>
+       <br>
+       <div class="progressbar" style="width: 300px;">
+            <div class="progress"></div>
+       </div>
+    </div>
+</body>
+</html>

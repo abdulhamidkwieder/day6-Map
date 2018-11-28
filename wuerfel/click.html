@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Javascript wuerfelpoker</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <script src="jquery-3.3.1.min.js"></script>
+    <style>
+        .countainer {
+            width: 60%;
+            max-width: 1020px;
+            margin: 2em auto 0 auto;
+            min-height: 20em;
+            box-shadow: 0 0 8px rgba(0,0,0,0.2);
+        }
+        .button-success {
+            text-align: center;
+            color: white;
+            border-radius: 4px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+            background: rgb(28, 184, 65);
+            margin: 10px;
+            margin-left: 30%;
+        }
+        .big {
+            transform: scale(0.7);
+        }
+/*
+        img:hover {
+           animation: shake 0.5s;
+           animation-iteration-count: infinite;
+        }
+
+        @keyframes shake {
+           0% { transform: translate(1px, 1px) rotate(0deg); }
+           10% { transform: translate(-1px, -2px) rotate(-1deg); }
+           20% { transform: translate(-3px, 0px) rotate(1deg); }
+           30% { transform: translate(3px, 2px) rotate(0deg); }
+           40% { transform: translate(1px, -1px) rotate(1deg); }
+           50% { transform: translate(-1px, 2px) rotate(-1deg); }
+           60% { transform: translate(-3px, 1px) rotate(0deg); }
+           70% { transform: translate(3px, 1px) rotate(-1deg); }
+           80% { transform: translate(-1px, -1px) rotate(1deg); }
+           90% { transform: translate(1px, 2px) rotate(0deg); }
+           100% { transform: translate(1px, -2px) rotate(-1deg); }
+        } */
+    </style>
+   <script>
+       // عند الضفط على الزر يتم تحميل خمس صور وعند الضغط مرة أخرى يتم تحميل صور عشوائية مرة أخرى
+
+       var zufall = function () { 
+           return Math.floor(Math.random() * 6) +1;
+        }
+
+        var aendre = function (bild) { 
+            var wurf = zufall();
+            bild.attr('src', 'wuerfel/wuerfel'+wurf+'cols5.jpg');
+         }
+        $(document).ready(function(){
+            $('#rolldice').on('click', function(){
+                // $('#game').empty();
+                var div = $('<div>');
+
+                $('#game div:last-child').hide();
+                
+                for (let i = 1; i <= 5; i++) {
+
+                    var altesBild = $('#game div:last-child img:nth-child('+i+')' );
+                    if (altesBild.hasClass('big')) {
+                        var bild = altesBild.clone().appendTo(div);
+                    } else {
+                         var wurf = zufall();
+                         var bild = 
+                         $('<img>')
+                         .attr('src', 'wuerfel/wuerfel'+wurf+'cols5.jpg')
+                         .appendTo(div); 
+
+                        (function (bild) {
+                            var counter = 0;
+                            var meineInterval = 
+                         setInterval( function () {
+                             counter++;
+                             if (counter == 10 ) {
+                                 clearInterval(meineInterval);
+                             }
+                             aendre(bild);
+                           }, 100);
+                        } (bild));
+
+                     }
+                    
+
+                    bild.on('click', function () { 
+                        $(this).toggleClass('big');
+                    
+                    // هذه الإيف معناها أنه عندما يكون الرقم 6 فالمربع سيصبح أصغر
+                   /* if (wurf == 6) {
+                        bild.addClass('big');
+                    } */
+                    });         
+                }
+                div.appendTo('#game');
+            });
+        });
+    </script>
+</head>
+<body>
+   <div class="countainer">
+       <div id="id1">
+            <button id="rolldice" class="button-success pure-button">Würfeln</button>
+       </div>
+    <section id="game"></section>
+   </div>    
+</body>
+</html>
